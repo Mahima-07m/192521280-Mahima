@@ -1,1 +1,5 @@
-
+import cv2
+image = cv2.imread("IMAGE.jpg") # Read the image
+gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) # Convert to grayscale
+cv2.imwrite("grayscale.jpg", gray) # Save the grayscale image
+print("Grayscale image saved successfully!")
