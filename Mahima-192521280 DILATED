@@ -1,0 +1,14 @@
+import cv2
+import numpy as np
+image = cv2.imread("input.jpg")
+if image is None:
+    print("Error: Image not found!")
+else:
+    kernel = np.ones((7, 7), np.uint8)
+    dilated_image = cv2.dilate(image, kernel, iterations=1)
+    cv2.imwrite("dilated_image.jpg", dilated_image)
+    print("Dilated image saved successfully!")
+    cv2.imshow("Original Image", image)
+    cv2.imshow("Dilated Image", dilated_image)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
