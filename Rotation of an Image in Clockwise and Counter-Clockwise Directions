@@ -1,0 +1,33 @@
+import cv2
+
+# Read the image
+image = cv2.imread("input.jpg")
+
+# Check if image is loaded
+if image is None:
+    print("Error: Image not found!")
+    exit()
+
+# Get image dimensions
+(h, w) = image.shape[:2]
+center = (w // 2, h // 2)
+
+# Rotate 90° clockwise
+matrix_clockwise = cv2.getRotationMatrix2D(center, -90, 1.0)
+clockwise = cv2.warpAffine(image, matrix_clockwise, (w, h))
+
+# Rotate 90° counter-clockwise
+matrix_counter = cv2.getRotationMatrix2D(center, 90, 1.0)
+counter_clockwise = cv2.warpAffine(image, matrix_counter, (w, h))
+
+# Display images
+cv2.imshow("Original Image", image)
+cv2.imshow("Clockwise Rotation", clockwise)
+cv2.imshow("Counter Clockwise Rotation", counter_clockwise)
+
+# Save rotated images
+cv2.imwrite("clockwise.jpg", clockwise)
+cv2.imwrite("counter_clockwise.jpg", counter_clockwise)
+
+cv2.waitKey(0)
+cv2.destroyAllWindows()
