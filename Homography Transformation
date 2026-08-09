@@ -1,0 +1,37 @@
+import cv2
+import numpy as np
+import os
+
+os.makedirs("output", exist_ok=True)
+
+img = cv2.imread("input.jpg")
+
+pts1 = np.float32([
+    [50, 50],
+    [400, 50],
+    [50, 400],
+    [400, 400]
+])
+
+pts2 = np.float32([
+    [0, 0],
+    [400, 30],
+    [30, 400],
+    [400, 400]
+])
+
+H, status = cv2.findHomography(pts1, pts2)
+
+result = cv2.warpPerspective(
+    img,
+    H,
+    (500, 500)
+)
+
+cv2.imwrite("output/q14_homography.jpg", result)
+
+cv2.imshow("Homography Transformation", result)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+print("Output saved: output/q14_homography.jpg")
