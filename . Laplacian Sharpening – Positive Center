@@ -1,0 +1,32 @@
+import cv2
+import numpy as np
+import os
+
+os.makedirs("output", exist_ok=True)
+
+img = cv2.imread("input.jpg")
+
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+kernel = np.array([
+    [0, -1, 0],
+    [-1, 5, -1],
+    [0, -1, 0]
+], dtype=np.float32)
+
+sharpened = cv2.filter2D(
+    gray,
+    -1,
+    kernel
+)
+
+cv2.imwrite(
+    "output/q22_laplacian_positive.jpg",
+    sharpened
+)
+
+cv2.imshow("Laplacian Positive Center", sharpened)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+print("Output saved: output/q22_laplacian_positive.jpg")
