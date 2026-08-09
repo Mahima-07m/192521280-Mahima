@@ -1,0 +1,59 @@
+import cv2
+import numpy as np
+import os
+
+os.makedirs("output", exist_ok=True)
+
+img = cv2.imread("input.jpg")
+
+src = np.float32([
+    [50, 50],
+    [400, 50],
+    [50, 400],
+    [400, 400]
+])
+
+dst = np.float32([
+    [0, 0],
+    [400, 30],
+    [30, 400],
+    [400, 400]
+])
+
+A = []
+
+for (x, y), (u, v) in zip(src, dst):
+
+    A.append([
+        -x, -y, -1,
+        0, 0, 0,
+        u*x, u*y, u
+    ])
+
+    A.append([
+        0, 0, 0,
+        -x, -y, -1,
+        v*x, v*y, v
+    ])
+
+A = np.array(A)
+
+U, S, Vt = np.linalg.svd(A)
+
+H = Vt[-1].reshape(3, 3)
+
+H = H / H[2, 2]
+
+result = cv2.warpPerspective(
+    img,
+    H,
+    (500, 500)
+)
+
+cv2.imwrite("output/q15_dlt.jpg", result)
+
+cv2.imshow("DLT Transformation", result)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+print("Output saved: output/q15_dlt.jpg")
