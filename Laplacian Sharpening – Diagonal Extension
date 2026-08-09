@@ -1,0 +1,40 @@
+import cv2
+import numpy as np
+import os
+
+os.makedirs("output", exist_ok=True)
+
+img = cv2.imread("input.jpg")
+
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+kernel = np.array([
+    [1, 1, 1],
+    [1, -8, 1],
+    [1, 1, 1]
+], dtype=np.float32)
+
+laplacian = cv2.filter2D(
+    gray,
+    cv2.CV_32F,
+    kernel
+)
+
+sharpened = gray.astype(np.float32) - laplacian
+
+sharpened = np.clip(
+    sharpened,
+    0,
+    255
+).astype(np.uint8)
+
+cv2.imwrite(
+    "output/q21_laplacian_diagonal.jpg",
+    sharpened
+)
+
+cv2.imshow("Laplacian Diagonal Extension", sharpened)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+print("Output saved: output/q21_laplacian_diagonal.jpg")
