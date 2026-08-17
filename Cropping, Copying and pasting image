@@ -1,0 +1,75 @@
+import cv2
+
+# Read input image
+input_path = r"C:\Users\SAIL\Desktop\activity\lab\street.png"
+img = cv2.imread(input_path)
+
+if img is None:
+    print("Error: Image not found!")
+    exit()
+
+# Get image dimensions
+height, width = img.shape[:2]
+
+print("Image Width:", width)
+print("Image Height:", height)
+
+# --------------------------------------------------
+# CROP TOP-CENTER REGION
+# --------------------------------------------------
+
+# Crop dimensions
+crop_width = int(width * 0.25)
+crop_height = int(height * 0.25)
+
+# Calculate top-center position
+x1 = (width - crop_width) // 2
+y1 = 0
+
+x2 = x1 + crop_width
+y2 = y1 + crop_height
+
+# Crop the top-center region
+cropped = img[y1:y2, x1:x2].copy()
+
+# --------------------------------------------------
+# COPY AND PASTE TO TOP-LEFT
+# --------------------------------------------------
+
+# Create a copy of the original image
+result = img.copy()
+
+# Destination: top-left
+paste_x = 20
+paste_y = 20
+
+# Paste the cropped region
+result[
+    paste_y:paste_y + crop_height,
+    paste_x:paste_x + crop_width
+] = cropped
+
+# --------------------------------------------------
+# SAVE OUTPUTS
+# --------------------------------------------------
+
+crop_path = r"C:\Users\SAIL\Desktop\activity\lab\27_cropped.png"
+output_path = r"C:\Users\SAIL\Desktop\activity\lab\27_copy_paste.png"
+
+cv2.imwrite(crop_path, cropped)
+cv2.imwrite(output_path, result)
+
+# --------------------------------------------------
+# DISPLAY
+# --------------------------------------------------
+
+cv2.imshow("Original Image", img)
+cv2.imshow("Top-Center Cropped Region", cropped)
+cv2.imshow("Top-Center to Top-Left Copy-Paste", result)
+
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+print("Cropping completed successfully.")
+print("Cropped image saved at:", crop_path)
+print("Copy-paste result saved at:", output_path)
