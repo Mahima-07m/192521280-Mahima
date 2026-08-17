@@ -1,0 +1,104 @@
+import cv2
+import numpy as np
+
+# Read input image
+input_path = r"C:\Users\SAIL\Desktop\activity\lab\street.png"
+img = cv2.imread(input_path)
+
+if img is None:
+    print("Error: Image not found!")
+    exit()
+
+# Get image dimensions
+height, width = img.shape[:2]
+
+# Create transparent overlay
+overlay = np.zeros_like(img)
+
+# Watermark settings
+text = "MAHIMA  .  COMPUTER VISION"
+font = cv2.FONT_HERSHEY_SIMPLEX
+font_scale = 1.2
+thickness = 2
+
+# Watermark color
+color = (255, 255, 255)
+
+# Get text size
+(text_width, text_height), _ = cv2.getTextSize(
+    text,
+    font,
+    font_scale,
+    thickness
+)
+
+# Repeat watermark across the image
+spacing_x = text_width + 100
+spacing_y = 130
+
+for y in range(-100, height + 200, spacing_y):
+    for x in range(-width, width * 2, spacing_x):
+        cv2.putText(
+            overlay,
+            text,
+            (x, y),
+            font,
+            font_scale,
+            color,
+            thickness,
+            cv2.LINE_AA
+        )
+
+# Rotate watermark pattern
+center = (width // 2, height // 2)
+
+rotation_matrix = cv2.getRotationMatrix2D(
+    center,
+    -25,
+    1.0
+)
+
+rotated_overlay = cv2.warpAffine(
+    overlay,
+    rotation_matrix,
+    (width, height),
+    borderMode=cv2.BORDER_CONSTANT,
+    borderValue=(0, 0, 0)
+)
+
+# Create mask to identify watermark pixels
+gray_overlay = cv2.cvtColor(
+    rotated_overlay,
+    cv2.COLOR_BGR2GRAY
+)
+
+mask = gray_overlay > 0
+
+# Create watermarked image
+watermarked = img.copy()
+
+# Watermark transparency
+alpha = 0.28
+
+# Blend only where watermark exists
+watermarked[mask] = cv2.addWeighted(
+    img[mask],
+    1 - alpha,
+    rotated_overlay[mask],
+    alpha,
+    0
+)
+
+# Save output
+output_path = r"C:\Users\SAIL\Desktop\activity\lab\26_watermarked.png"
+cv2.imwrite(output_path, watermarked)
+
+# Display
+cv2.imshow("Original Image", img)
+cv2.imshow("Watermarked Image", watermarked)
+
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+print("Watermark inserted successfully.")
+print("Output saved at:", output_path)
