@@ -1,0 +1,66 @@
+import cv2
+import numpy as np
+
+# Read input image
+input_path = r"C:\Users\SAIL\Desktop\activity\lab\street.png"
+img = cv2.imread(input_path)
+
+if img is None:
+    print("Error: Image not found!")
+    exit()
+
+# Convert image to grayscale
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+# Calculate horizontal gradient
+gx = cv2.Sobel(gray, cv2.CV_64F, 1, 0, ksize=3)
+
+# Calculate vertical gradient
+gy = cv2.Sobel(gray, cv2.CV_64F, 0, 1, ksize=3)
+
+# Calculate gradient magnitude
+gradient = cv2.magnitude(
+    gx.astype(np.float32),
+    gy.astype(np.float32)
+)
+
+# Normalize gradient to 0-255
+gradient = cv2.normalize(
+    gradient,
+    None,
+    0,
+    255,
+    cv2.NORM_MINMAX
+)
+
+gradient = gradient.astype(np.uint8)
+
+# Convert gradient mask to 3-channel image
+gradient_mask = cv2.cvtColor(
+    gradient,
+    cv2.COLOR_GRAY2BGR
+)
+
+# Apply gradient masking
+sharpened = cv2.addWeighted(
+    img,
+    1.0,
+    gradient_mask,
+    0.5,
+    0
+)
+
+# Save output
+output_path = r"C:\Users\SAIL\Desktop\activity\lab\25_gradient_masking.png"
+cv2.imwrite(output_path, sharpened)
+
+# Display results
+cv2.imshow("Original Image", img)
+cv2.imshow("Gradient Mask", gradient_mask)
+cv2.imshow("Gradient Masked Image", sharpened)
+
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+print("Gradient masking completed successfully.")
+print("Output saved at:", output_path)
