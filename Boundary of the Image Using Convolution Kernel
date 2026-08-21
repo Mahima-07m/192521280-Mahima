@@ -1,0 +1,40 @@
+import cv2
+import numpy as np
+
+# Read input image
+input_path = r"D:\CS Vision\lab 28-40\input.jpg"
+img = cv2.imread(input_path)
+
+if img is None:
+    print("Error: Image not found!")
+    exit()
+
+# Convert image to grayscale
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+# Boundary detection convolution kernel
+kernel = np.array([
+    [-1, -1, -1],
+    [-1,  8, -1],
+    [-1, -1, -1]
+], dtype=np.float32)
+
+# Apply convolution
+boundary = cv2.filter2D(gray, -1, kernel)
+
+# Convert negative values to positive display values
+boundary = cv2.convertScaleAbs(boundary)
+
+# Save output
+output_path = r"D:\CS Vision\lab 28-40\28_boundary.png"
+cv2.imwrite(output_path, boundary)
+
+# Display images
+cv2.imshow("Original Image", img)
+cv2.imshow("Boundary Detected Image", boundary)
+
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+print("Boundary detection completed successfully.")
+print("Output saved at:", output_path)
