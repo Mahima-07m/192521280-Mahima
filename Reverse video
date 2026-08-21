@@ -1,0 +1,75 @@
+import cv2
+
+# Input video
+input_path = r"INPUT.mp4"
+
+# Open video
+cap = cv2.VideoCapture(input_path)
+
+if not cap.isOpened():
+    print("Error: Could not open INPUT.mp4")
+    exit()
+
+# Get video properties
+fps = cap.get(cv2.CAP_PROP_FPS)
+width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
+print("FPS:", fps)
+print("Width:", width)
+print("Height:", height)
+
+# Store all frames
+frames = []
+
+while True:
+    ret, frame = cap.read()
+
+    if not ret:
+        break
+
+    frames.append(frame)
+
+cap.release()
+
+print("Total frames:", len(frames))
+
+# Reverse frame order
+frames.reverse()
+
+# Output video
+output_path = r"37_reverse_video.mp4"
+
+# Video writer
+fourcc = cv2.VideoWriter_fourcc(*"mp4v")
+
+out = cv2.VideoWriter(
+    output_path,
+    fourcc,
+    fps,
+    (width, height)
+)
+
+# Play and save video in reverse
+for frame in frames:
+
+    cv2.imshow(
+        "Video Playing in Reverse",
+        frame
+    )
+
+    out.write(frame)
+
+    # Press Q to stop
+    delay = max(1, int(1000 / fps))
+
+    if cv2.waitKey(delay) & 0xFF == ord('q'):
+        break
+
+# Release resources
+out.release()
+
+cv2.destroyAllWindows()
+
+print("Reverse video created successfully.")
+print("Output saved as:", output_path)
