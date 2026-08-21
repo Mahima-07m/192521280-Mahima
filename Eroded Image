@@ -1,0 +1,46 @@
+import cv2
+import numpy as np
+
+# Read input image
+input_path = r"D:\CS Vision\lab 28-40\input.jpg"
+img = cv2.imread(input_path)
+
+if img is None:
+    print("Error: Image not found!")
+    exit()
+
+# Convert to grayscale
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+# Convert image to binary
+_, binary = cv2.threshold(
+    gray,
+    200,
+    255,
+    cv2.THRESH_BINARY
+)
+
+# Create structuring element
+kernel = np.ones((5, 5), np.uint8)
+
+# Apply erosion
+eroded = cv2.erode(
+    binary,
+    kernel,
+    iterations=1
+)
+
+# Save output
+output_path = r"D:\CS Vision\lab 28-40\29_erosion.png"
+cv2.imwrite(output_path, eroded)
+
+# Display images
+cv2.imshow("Original Image", img)
+cv2.imshow("Binary Image", binary)
+cv2.imshow("Eroded Image", eroded)
+
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+print("Erosion completed successfully.")
+print("Output saved at:", output_path)
